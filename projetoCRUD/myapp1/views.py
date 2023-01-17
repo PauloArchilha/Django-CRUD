@@ -30,9 +30,24 @@ def create(request):
             return redirect(index)
 
 
-def modify(request, user_id):
-    context = {
-        'id': user_id,
+def refresh(request, user_id):
 
-    }
-    return render(request, 'user/index.html', context=context)
+    user = User.objects.get(pk=user_id)
+
+    if request.method == 'POST':
+        form = UserForm(data=request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect(index)
+    else:
+        form = UserForm(instance=user)
+
+        context = {'form': form}
+
+        return render(request, 'criar.html', context=context)
+
+def delete(request, user_id):
+    user = User.objects.get(pk=user_id)
+    user.delete()
+    
+    return redirect(index)
